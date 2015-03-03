@@ -3,11 +3,16 @@
 `n` attempt to embrace all module system in one template.
 
 #### Requirements
-* supported for `amd` AND `global` AND `cjs` when available
+* support for `amd` AND `global` AND `cjs` when available 
+* handling async nature of `requirejs`
+* do not register any global when dealing with `node`
+* resolve dependency based upon one system scope, if global take global, if amd take am...
 
-#### Draft
+#### Caveats (some obvious facts)
+* if lib is not registered within global then lib is assumed that most likely it is a `async` dep and `requirejs` loader is required.
+
+#### Template
 ```js
-//re-define version:0.0.1-alpha
 //externals: test-module-global,test-module-amd
 (function (parent, factory){
   var _instance

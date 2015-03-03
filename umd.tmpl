@@ -28,7 +28,6 @@
 
     if(parent[_name] || window[_name]) {
       globalDeps.push(_name)
-      //Available for remapping on build step lodash -> _ etc.
 
       deps[i] = parent[_name] || window[_name]
       continue
