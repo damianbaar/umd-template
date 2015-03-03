@@ -52,7 +52,12 @@
   registerGlobal()
 
   function registerAMD() {
-    if (hasAMD && amdDeps.length) {
+    if (hasAMD) {
+      if (!amdDeps.length) {
+        define('umd-async', function() { return _instance })
+        return
+      }
+
       //Load missing dependencies
       require(amdDeps, function() {
         var asyncDeps = arguments
@@ -79,7 +84,6 @@
         })
       })
     } else {
-      define('umd-async', function() { return _instance })
     }
   }
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>UMD Template</title>
+    <script>
+      //SYNC
+      this['test-module-amd'] = 'exported::test-module-amd' 
+
+      //note: dependency only available from global scope
+      //dependency remapped in re-define config require('test-module-global') -> window/parent['test-module']
+      this['test-module'] = 'exported::test-module-global'
+
+    </script>
+  </head>
+  <body>
+  <script src="umd-async.bundle.js" type="text/javascript" charset="utf-8"></script>
+  <script src="umd-sync.bundle.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+
+    console.group('GLOBALS')
+      console.log('umd-async exist since all dependencies are available from global scope', this.umd.async)
+      console.log('umd-sync exist', this.umd.sync)
+    console.groupEnd()
+
+  </script>
+  <h1>Open DevConsole</h1>
+  </body>
+</html>
