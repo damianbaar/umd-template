@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>UMD Template</title>
+    <script src="require.js" type="text/javascript" charset="utf-8"></script>
+  </head>
+  <body>
+  <script>
+    
+    //note: dependency only available in UMD
+    define('test-module-amd', function() { return 'exported::test-module-amd' })
+
+    //note: dependency only available from global scope
+    this['test-module-global'] = 'exported::test-module-global'
+
+  </script>
+  <script src="umd.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    require(['umd-template'],function(umd) {
+      console.log('UMD lodaded:', umd)
+      console.log('Module is registered on global scope after got all deps:', this['umd-template'])
+    })
+
+  </script>
+  </body>
+</html>
