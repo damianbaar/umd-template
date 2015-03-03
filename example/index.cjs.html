@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>UMD Template</title>
+  </head>
+  <body>
+  <script>
+    var modules = {
+      'test-module-amd': { exports: 'exported::test-module-amd' },
+      'test-module-global': { exports: 'exported::test-module-global' }
+      }
+      , require = function(name) { return modules[name].exports }
+      , module 
+
+    //get instance of module and make reachable by require
+    module = { exports: {} }
+    modules['umd-async'] = module
+  </script>
+
+  <script src="umd-async.bundle.js" type="text/javascript" charset="utf-8"></script>
+
+  <script>
+    //get instance of module and make reachable by require
+    module = { exports: {} }
+    modules['umd-sync'] = module
+  </script>
+
+  <script src="umd-sync.bundle.js" type="text/javascript" charset="utf-8"></script>
+
+  <script>
+
+    console.group('GLOBALS')
+      console.log('umd-async exists', this.umd.async)
+      console.log('umd-sync exists', this.umd.sync)
+      console.groupEnd()
+
+    console.group('REQUIRE - CJS')
+      console.log('umd-async exists', require('umd-async'))
+      console.log('umd-sync exists', require('umd-sync'))
+    console.groupEnd()
+
+  </script>
+  <h1>Open DevConsole</h1>
+  </body>
+</html>

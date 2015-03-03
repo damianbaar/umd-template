@@ -12,7 +12,7 @@
 * module not available via `UMD` (`AMD`or`global`or`CJS`) - if dependency is not registered within global scope then will be treated as `async` dependency and `requirejs` loader will be required, it is only applicable when `requirejs` exists, otherwise will try to run other `require` or just fail because of missing dependency.
 
 #### Examples
-Check how it works with [globals](example/index.global.html) or with [requirejs](example/index.require.html)
+Check how it works with [globals](example/index.global.html) ; [requirejs](example/index.require.html) ; [cjs](example/index.cjs.html)
 
 #### Template
 ```js

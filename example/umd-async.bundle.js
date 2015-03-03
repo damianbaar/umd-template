@@ -4,7 +4,7 @@
   var _instance
 
   var hasAMD = typeof define === 'function' && define.amd
-    , hasCJS = typeof exports === 'object'
+    , hasCJS = typeof module === 'object' || typeof exports === 'object'
     , hasWindow = typeof window != 'undefined'
 
   var amdDeps = []
