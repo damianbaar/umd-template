@@ -13,6 +13,7 @@
 
 #### Examples
 Check how it deal with [globals](example/index.global.html); [requirejs](example/index.require.html); [cjs](example/index.cjs.html)
+
 Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle.js)
 
 ##### ... for lazy ones
