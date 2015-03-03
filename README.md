@@ -12,7 +12,7 @@
 * if lib is not registered within global then lib is assumed that most likely it is a `async` dep and `requirejs` loader is required.
 
 #### Examples
-Check how it works with [globals](examples/index.global.html) or with [requirejs](examples/index.require.html)
+Check how it works with [globals](example/index.global.html) or with [requirejs](example/index.require.html)
 
 #### Template
 ```js
