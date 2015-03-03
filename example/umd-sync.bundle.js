@@ -1,14 +1,5 @@
-#### UMD template
-
-`n` attempt to embrace all module system in one template.
-
-#### Requirements
-* supported for `amd` AND `global` AND `cjs` when available
-
-#### Draft
-```js
 //re-define version:0.0.1-alpha
-//externals: test-module-global,test-module-amd
+//externals: test-module-global
 (function (parent, factory){
   var _instance
 
@@ -20,7 +11,7 @@
     , globalDeps = []
     , cjsDeps = []
 
-  var args = ['test-module-global','test-module-amd']
+  var args = ['test-module-global']
     , deps = []
   
   //Only for node
@@ -69,7 +60,7 @@
           , current = 0
 
         //After all dependencies are loaded - register a module
-        define('umd-async', function() { 
+        define('umd-sync', function() { 
           //Fill missing dependencies with right async instances
           //[dep,undefined,dep,undefined] -> [dep, arguments[0], dep, arguments[1]]
           for(var i = 0; i < args.length; i++) {
@@ -89,14 +80,14 @@
         })
       })
     } else {
-      define('umd-async', function() { return _instance })
+      define('umd-sync', function() { return _instance })
     }
   }
 
   function registerGlobal() {
     if(!amdDeps.length && hasWindow) {
     parent["umd"] = parent["umd"] || {};
-    parent["umd"]["async"] = _instance;
+    parent["umd"]["sync"] = _instance;
 
     }
   }
@@ -119,5 +110,56 @@
       return ready
     }
   }
+  }(this, function (test_module_global) {
+  var closure = {}
+  closure['test-module-global'] = test_module_global
+  
+var __req = (function (modules, namespace, imports) {
+  var __oldReq = typeof require == "function" && require
+
+  function __req(name){
+
+    if(!namespace[name]) {
+      var f = modules[name]
+        , m = { exports:{} }
+        , args
+
+      if(f) {
+
+        args = [m.exports, function(x) {
+          return __req(x)
+        }, m].concat(f.slice(1))
+
+        namespace[name] = m
+        f = f[0].apply(null, args)
+      } else {
+        var mod
+          , len = imports && imports.length;
+
+        for(var i=0; i < len; i++) {
+          mod = imports[i] && imports[i][name];
+          if(mod) return mod;
+        }
+
+        if(__oldReq) return __oldReq.apply(null, arguments);
+        throw new Error('Module does not exists ' + name);
+      }
+    }
+    return namespace[name].exports;
+  }
+
+  return __req;
+})
+({ 
+'umd-sync/umd-sync': [function(exports,require,module) { 
+    var global = require('test-module-global');
+    module.exports = 'umd-sync::ready::all deps lodaded';
+}]
+}
+, {} 
+, typeof window === 'undefined' ? [] : [closure]
 )
-```
+
+return __req('umd-sync/umd-sync')
+
+}.bind({})))
