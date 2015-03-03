@@ -50,39 +50,38 @@
   registerGlobal()
 
   function registerAMD() {
-    if (hasAMD) {
-      if (!amdDeps.length) {
-        define('<%- config.names.amd %>', function() { return _instance })
-        return
-      }
+    if (!hasAMD) return
 
-      //Load missing dependencies
-      require(amdDeps, function() {
-        var asyncDeps = arguments
-          , current = 0
-
-        //After all dependencies are loaded - register a module
-        define('<%- config.names.amd %>', function() { 
-          //Fill missing dependencies with right async instances
-          //[dep,undefined,dep,undefined] -> [dep, arguments[0], dep, arguments[1]]
-          for(var i = 0; i < args.length; i++) {
-            if(typeof deps[i] == 'undefined') {
-              deps[i] = asyncDeps[current]
-              current++
-            }
-          }
-
-          amdDeps = []
-
-          initFactory()
-          registerGlobal()
-          registerCJS()
-
-          return _instance
-        })
-      })
-    } else {
+    if (!amdDeps.length) {
+      define('<%- config.names.amd %>', function() { return _instance })
+      return
     }
+
+    //Load missing dependencies
+    require(amdDeps, function() {
+      var asyncDeps = arguments
+        , current = 0
+
+      //After all dependencies are loaded - register a module
+      define('<%- config.names.amd %>', function() { 
+        //Fill missing dependencies with right async instances
+        //[dep,undefined,dep,undefined] -> [dep, arguments[0], dep, arguments[1]]
+        for(var i = 0; i < args.length; i++) {
+          if(typeof deps[i] == 'undefined') {
+            deps[i] = asyncDeps[current]
+            current++
+          }
+        }
+
+        amdDeps = []
+
+        initFactory()
+        registerGlobal()
+        registerCJS()
+
+        return _instance
+      })
+    })
   }
 
   function registerGlobal() {
