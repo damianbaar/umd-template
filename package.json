@@ -1,9 +1,9 @@
 {
   "name": "re-define-umd-template",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
-  "scripts": { },
+  "scripts": {},
   "author": "Damian Baar <damian.baar@gmail.com> (http://github.com/damianbaar)",
   "license": "ISC",
   "devDependencies": {
