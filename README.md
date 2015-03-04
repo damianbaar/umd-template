@@ -29,7 +29,7 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
   ....
 ```
 
-##### ... for lazy ones
+##### ... and the template
 ```js
 //externals: test-module-global,test-module-amd
 (function (parent, factory){
