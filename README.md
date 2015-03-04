@@ -16,6 +16,19 @@ Check how it deals with [globals](http://damianbaar.github.io/umd-template/index
 
 Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle.js)
 
+#### Grunt with `re-define`
+
+```js
+  grunt.initConfig({
+    redefine: {
+      options: { 
+        wrappers: { 
+          'umd-template': require('re-define-umd-template')
+        }
+      , wrapper: 'umd-template'
+  ....
+```
+
 ##### ... for lazy ones
 ```js
 //externals: test-module-global,test-module-amd
