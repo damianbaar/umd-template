@@ -9,7 +9,7 @@
 * resolve dependency based upon one system scope, if global take global, if amd take am...
 
 #### Caveats (some obvious facts)
-* module not available via `UMD` (`AMD`or`global`or`CJS`) - if dependency is not registered within global scope then will be treated as `async` dependency and `requirejs` loader will be required, it is only applicable when `requirejs` exists, otherwise will try to run other `require` or just fail because of missing dependency.
+* module not available via `global`or`CJS` - when you requires a module which only is reachable from `requirejs` then you need to require your main in `requirejs` manner in order to keep order in async libs.
 
 #### Examples
 Check how it deals with [globals](http://damianbaar.github.io/umd-template/index.global.html); [requirejs](http://damianbaar.github.io/umd-template/index.require.html); [cjs](http://damianbaar.github.io/umd-template/index.cjs.html)
@@ -29,11 +29,24 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
   ....
 ```
 
-##### ... and the template
-```js
-//externals: test-module-global,test-module-amd
+#### Template
+
+#### with `async` support
+
+```
 (function (parent, factory){
   var _instance
+
+  //PARAMS
+  var externals = ['jquery', 'lodash']
+    , globals = { jquery: $, lodash: _ }
+    , exports = { amd: 'MODULE-A', global: 'MODULE-A' }
+    , registerGlobal = function() {
+        /**
+         * a.b.c => var a = a || {}; a.b = a.b || {}; a.b.c = _instance
+         **/
+        parent[ exports.global ] = _instance
+    }
 
   var hasAMD = typeof define === 'function' && define.amd
     , hasCJS = typeof module === 'object' || typeof exports === 'object'
@@ -42,23 +55,20 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
   var amdDeps = []
     , globalDeps = []
     , cjsDeps = []
-
-  var args = ['test-module-global','test-module-amd']
     , deps = []
-  
+
   //Only for node
   if(!hasWindow) {
-    cjsDeps = args
+    cjsDeps = exports
     initFactory()
     registerCJS()
     return
   }
 
   //Check dependency availability whether is registered as amd,global or cjs
-  for(var i = 0; i < args.length; i++) {
-    var name = args[i]
-    , globals = {"test-module-global":"test-module"}
-    , _name = globals[name] || name
+  for(var i = 0; i < exports.length; i++) {
+    var name = exports[i]
+      , _name = globals[name] || name
 
     if(parent[_name] || window[_name]) {
       globalDeps.push(_name)
@@ -78,16 +88,16 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
     amdDeps.push(name)
   }
   
-  initFactory()
-  registerAMD()
-  registerCJS()
-  registerGlobal()
+  _initFactory()
+  _registerAMD()
+  _registerCJS()
+  _registerGlobal()
 
-  function registerAMD() {
+  function _registerAMD() {
     if (!hasAMD) return
 
     if (!amdDeps.length) {
-      define('umd-async', function() { return _instance })
+      define(exports.amd, function() { return _instance })
       return
     }
 
@@ -97,10 +107,10 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
         , current = 0
 
       //After all dependencies are loaded - register a module
-      define('umd-async', function() { 
+      define(exports.amd, function() { 
         //Fill missing dependencies with right async instances
-        //[dep,undefined,dep,undefined] -> [dep, arguments[0], dep, arguments[1]]
-        for(var i = 0; i < args.length; i++) {
+        //[dep, undefined, dep, undefined] -> [dep, arguments[0], dep, arguments[1]]
+        for(var i = 0; i < exports.length; i++) {
           if(typeof deps[i] == 'undefined') {
             deps[i] = asyncDeps[current]
             current++
@@ -109,29 +119,26 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
 
         amdDeps = []
 
-        initFactory()
-        registerGlobal()
-        registerCJS()
+        _initFactory()
+        _registerGlobal()
+        _registerCJS()
 
         return _instance
       })
     })
   }
 
-  function registerGlobal() {
-    if(!amdDeps.length && hasWindow) {
-    parent["umd"] = parent["umd"] || {};
-    parent["umd"]["async"] = _instance;
-
-    }
-  }
-
-  function registerCJS() { 
+  function _registerCJS() { 
     if (!amdDeps.length && hasCJS)
       module.exports = _instance 
   }
 
-  function initFactory() { 
+  function _registerGlobal() {
+    if(!amdDeps.length && hasWindow) 
+      _registerGlobal && _registerGlobal()
+  }
+
+  function _initFactory() { 
 
     isReady() && (_instance = factory.apply(null, deps))
 
@@ -144,7 +151,35 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
       return ready
     }
   }
-}(this, function (test_module_global,test_module_amd) {
-    //MAGIC, your spels!
+  })(this, function (jquery, lodash) {
+  
+  return EXPORT_YOUR_SPELLS
+})
+```
+
+##### sync only
+
+* register: `amd` OR `global' or `cjs`
+* when exporting `global` or `cjs` then all dependencies needs to be available in `global` scope or via `requirejs`, `amd` deps are omitted completely here.
+
+```
+(function (parent, factory){
+  var __f
+
+  if (typeof exports === 'object')
+    module.exports = __f = factory(require('jquery'), require('lodash'))
+
+  if (typeof window != 'undefined') {
+    var hasAMD = typeof define === 'function' && define.amd
+
+    __f = __f || factory(this.$, this._) 
+    parent["MODULE-A"] = __f
+
+    if (hasAMD) define('MODULE-A', function() { return __f })
+  }
+  })(this, function (jquery, lodash) {
+
+  return EXPORT_YOUR_SPELLS
+
 })
 ```

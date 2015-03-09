@@ -1,4 +1,4 @@
-//re-define version:0.0.1-alpha
+//re-define version:0.0.3-alpha
 //externals: test-module-global,test-module-amd
 (function (parent, factory){
   var _instance
