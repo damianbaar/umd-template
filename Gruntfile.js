@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', [])
   grunt.registerTask('example', ['redefine'])
+  grunt.registerTask('default', ['redefine'])
 
   grunt.initConfig({
     redefine: {
