@@ -6,6 +6,7 @@
   var hasAMD = typeof define === 'function' && define.amd
     , hasCJS = typeof module === 'object' || typeof exports === 'object'
     , hasWindow = typeof window != 'undefined'
+    , hasRequire = typeof require == 'function'
 
   var amdDeps = []
     , globalDeps = []
@@ -25,17 +26,18 @@
   //Check dependency availability whether is registered as amd,global or cjs
   for(var i = 0; i < args.length; i++) {
     var name = args[i]
-    , globals = {"test-module-global":"test-module"}
+    , globals = {"test-module-global":"custom.namespace[\"test-module\"]"}
     , _name = globals[name] || name
+    , dep 
 
-    if(parent[_name] || window[_name]) {
+    if(dep = (find(parent, _name) || find(window, _name))) {
       globalDeps.push(_name)
 
-      deps[i] = parent[_name] || window[_name]
+      deps[i] = dep
       continue
     }
 
-    if(!hasAMD && require) {
+    if(!hasAMD && hasRequire) {
       cjsDeps.push(name)
       deps[i] = require(name)
       continue
@@ -97,6 +99,16 @@
   function registerCJS() { 
     if (!amdDeps.length && hasCJS)
       module.exports = _instance 
+  }
+
+  function find(parent, path) {
+    var _d, _p, k;
+    _p = path.match(/([\w|\-\_]+)/g)
+    for(k = 0; k < _p.length; k++) { 
+      if(k == 0) { _d = parent[_p[k]] }
+      else { _d && (_d = _d[_p[k]]) }
+    }
+    return _d
   }
 
   function initFactory() { 

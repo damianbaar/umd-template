@@ -12,7 +12,11 @@
 
       //note: dependency only available from global scope
       //dependency remapped in re-define config require('test-module-global') -> window/parent['test-module']
-      this['test-module'] = 'exported::test-module-global'
+      var custom = { 
+        namespace: {
+          'test-module': 'exported::test-module-global'
+        } 
+      }
 
     </script>
   </head>

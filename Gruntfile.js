@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         }
       , wrapper: 'umd-template'
       , globals : {
-          'test-module-global': 'test-module'
+          'test-module-global': 'custom.namespace["test-module"]'
         }
       , development: false
       },

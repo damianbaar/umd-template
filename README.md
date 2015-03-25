@@ -51,6 +51,7 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
   var hasAMD = typeof define === 'function' && define.amd
     , hasCJS = typeof module === 'object' || typeof exports === 'object'
     , hasWindow = typeof window != 'undefined'
+    , hasRequire = typeof require == 'function'
 
   var amdDeps = []
     , globalDeps = []
@@ -69,15 +70,16 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
   for(var i = 0; i < exports.length; i++) {
     var name = exports[i]
       , _name = globals[name] || name
+      , dep 
 
-    if(parent[_name] || window[_name]) {
+    if(dep = (_find(parent, _name) || _find(window, _name))) {
       globalDeps.push(_name)
 
-      deps[i] = parent[_name] || window[_name]
+      deps[i] = dep
       continue
     }
 
-    if(!hasAMD && require) {
+    if(!hasAMD && hasRequire) {
       cjsDeps.push(name)
       deps[i] = require(name)
       continue
@@ -131,6 +133,17 @@ Template in action [A](example/umd-sync.bundle.js), [B](example/umd-async.bundle
   function _registerCJS() { 
     if (!amdDeps.length && hasCJS)
       module.exports = _instance 
+  }
+  
+  //resolving long dots path, like window.foo.baz['bar']
+  function _find(parent, path) {
+    var _d, _p, k;
+    _p = path.match(/([\w|\-\_]+)/g)
+    for(k = 0; k < _p.length; k++) { 
+      if(k == 0) { _d = parent[_p[k]] }
+      else { _d && (_d = _d[_p[k]]) }
+    }
+    return _d
   }
 
   function _registerGlobal() {
