@@ -102,11 +102,11 @@
   }
 
   function find(parent, path) {
-    var varPattern = /([a-z_$][0-9a-z_$\-]*)/gi
+    var vars = /([a-z_$][0-9a-z_$\-]*)/gi
       , step
       , instance = parent
 
-    while ((step = varPattern.exec(path)) !== null) {
+    while ((step = vars.exec(path)) !== null) {
       if(!instance) return { error: 'Unable to resolve ' + path + parent }
       instance = instance[step[1] || step[0]]
     }
