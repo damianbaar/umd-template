@@ -102,13 +102,16 @@
   }
 
   function find(parent, path) {
-    var _d, _p, k;
-    _p = path.match(/([\w|\-\_]+)/g)
-    for(k = 0; k < _p.length; k++) { 
-      if(k == 0) { _d = parent[_p[k]] }
-      else { _d && (_d = _d[_p[k]]) }
+    var varPattern = /([a-z_$][0-9a-z_$\-]*)/gi
+      , step
+      , instance = parent
+
+    while ((step = varPattern.exec(path)) !== null) {
+      if(!instance) return { error: 'Unable to resolve ' + path + parent }
+      instance = instance[step[1] || step[0]]
     }
-    return _d
+
+    return instance
   }
 
   function initFactory() { 
